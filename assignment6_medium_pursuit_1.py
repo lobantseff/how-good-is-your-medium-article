@@ -1,23 +1,16 @@
 
 # coding: utf-8
 
-# <center>
-# <img src="../../img/ods_stickers.jpg" />
-#     
-# ## [mlcourse.ai](https://mlcourse.ai) – Open Machine Learning Course 
-# Author: [Yury Kashnitskiy](https://yorko.github.io) (@yorko). Edited by Sergey Kolchenko (@KolchenkoSergey). This material is subject to the terms and conditions of the [Creative Commons CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) license. Free use is permitted for any non-commercial purpose.
-
-# ## <center>Assignment #6
-# ### <center> Beating baselines in "How good is your Medium article?"
-#     
+# ## Assignment #6. Beating baselines in "How good is your Medium article?"
+# [Competition](https://www.kaggle.com/c/how-good-is-your-medium-article)
+# Baseline achieved: **1.42869**
+# ___
+# ### Pursuit#1
 # 
-# [Competition](https://www.kaggle.com/c/how-good-is-your-medium-article). The task is to beat "A6 baseline" (~1.45 Public LB score). Do not forget about our shared ["primitive" baseline](https://www.kaggle.com/kashnitsky/ridge-countvectorizer-baseline) - you'll find something valuable there.
 # 
-# **Your task:**
-#  1. "Freeride". Come up with good features to beat the baseline "A6 baseline" (for now, public LB is only considered)
-#  2. You need to name your [team](https://www.kaggle.com/c/how-good-is-your-medium-article/team) (out of 1 person) in full accordance with the [course rating](https://drive.google.com/open?id=19AGEhUQUol6_kNLKSzBsjcGUU3qWy3BNUg8x8IFkO3Q). You can think of it as a part of the assignment. 16 credits for beating the mentioned baseline and correct team naming.
+# 
 
-# In[276]:
+# In[1]:
 
 
 import os
@@ -37,7 +30,7 @@ import matplotlib.pyplot as plt
 
 # The following code will help to throw away all HTML tags from an article content.
 
-# In[4]:
+# In[2]:
 
 
 from html.parser import HTMLParser
@@ -61,7 +54,7 @@ def strip_tags(html):
 
 # Supplementary function to read a JSON line without crashing on escape characters.
 
-# In[5]:
+# In[3]:
 
 
 def read_json_line(line=None):
@@ -81,7 +74,7 @@ def read_json_line(line=None):
 
 # Extract features `content`, `published`, `title` and `author`, write them to separate files for train and test sets.
 
-# In[148]:
+# In[4]:
 
 
 def extract_features_and_write(path_to_data,
@@ -118,12 +111,18 @@ def extract_features_and_write(path_to_data,
         
 
 
-# In[149]:
+# In[5]:
 
 
 with open('data/train.json') as f:
     for i in range(3):
         jsond = read_json_line(f.readline())
+
+
+# In[6]:
+
+
+jsond
 
 
 # In[151]:
