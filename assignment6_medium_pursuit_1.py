@@ -15,7 +15,7 @@
 
 import os
 import json
-from tqdm import tqdm_notebook
+from tqdm import tqdm_notebook, tqdm
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -74,13 +74,19 @@ def read_json_line(line=None):
 
 # Extract features `content`, `published`, `title` and `author`, write them to separate files for train and test sets.
 
+# In[66]:
+
+
+import clean
+
+
 # In[4]:
 
 
 def extract_features_and_write(path_to_data,
                                inp_filename, is_train=True):
     
-    features = ['content', 'published', 'title', 'author']
+    features = ['content', 'published', 'title', 'author', 'link_tags']
     prefix = 'train' if is_train else 'test'
     feature_files = [open(os.path.join(path_to_data, 'generated',
                                        '{}_{}.txt'.format(prefix, feat)),
@@ -90,13 +96,13 @@ def extract_features_and_write(path_to_data,
     with open(os.path.join(path_to_data, inp_filename), 
               encoding='utf-8') as inp_json_file:
 
-        for line in tqdm_notebook(inp_json_file):
+        for line in tqdm(inp_json_file):
             json_data = read_json_line(line)
 
             for key, file in zip(features, feature_files):
                 if key == 'content':
-                    file.write(strip_tags(
-                        json_data[key].replace('\n', ' ').replace('\r', ' '))+'\n')
+                    file.write(clean.cleaning(strip_tags(
+                        json_data[key].replace('\n', ' ').replace('\r', ' '))+'\n'))
                 elif key == 'published':
                     file.write(list(json_data[key].values())[0]+'\n')
                 elif key == 'author':
@@ -111,33 +117,33 @@ def extract_features_and_write(path_to_data,
         
 
 
-# In[5]:
+# In[35]:
 
 
 with open('data/train.json') as f:
-    for i in range(3):
+    for i in range(2):
         jsond = read_json_line(f.readline())
+
+
+# In[38]:
+
+
+jsond['link_tags']
 
 
 # In[6]:
 
 
-jsond
-
-
-# In[151]:
-
-
 PATH_TO_DATA = 'data/' # modify this if you need to
 
 
-# In[152]:
+# In[40]:
 
 
 extract_features_and_write(PATH_TO_DATA, 'train.json', is_train=True)
 
 
-# In[153]:
+# In[7]:
 
 
 extract_features_and_write(PATH_TO_DATA, 'test.json', is_train=False)
@@ -149,7 +155,7 @@ extract_features_and_write(PATH_TO_DATA, 'test.json', is_train=False)
 #     - Time features: publication hour, whether it's morning, day, night, whether it's a weekend
 #     - Bag of authors (i.e. One-Hot-Encoded author names)
 
-# In[19]:
+# In[9]:
 
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -158,7 +164,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 # #### Datetime features
 
-# In[227]:
+# In[10]:
 
 
 X_datetime_train = pd.read_csv('data/generated/train_published.txt', 
@@ -171,7 +177,7 @@ X_datetime_test = pd.read_csv('data/generated/test_published.txt',
 X_datetime_train.shape, X_datetime_test.shape
 
 
-# In[258]:
+# In[11]:
 
 
 def add_datetime_features(df):
@@ -196,7 +202,7 @@ def add_datetime_features(df):
                 night.values.reshape(-1,1)]))
 
 
-# In[263]:
+# In[12]:
 
 
 X_datetime_train_sparse = add_datetime_features(X_datetime_train)
@@ -205,14 +211,14 @@ X_datetime_test_sparse = add_datetime_features(X_datetime_test)
 
 # #### Author features
 
-# In[260]:
+# In[13]:
 
 
 def getnick(path):
     return os.path.basename(os.path.normpath(path))
 
 
-# In[261]:
+# In[14]:
 
 
 X_authors_train = pd.read_csv(open('data/generated/train_author.txt'), 
@@ -221,13 +227,13 @@ X_authors_test = pd.read_csv(open('data/generated/test_author.txt'),
                         names=['url']).url.apply(getnick)
 
 
-# In[262]:
+# In[15]:
 
 
 X_authors_train.shape, X_authors_test.shape
 
 
-# In[199]:
+# In[16]:
 
 
 ohe = OneHotEncoder(handle_unknown='ignore')  # Ignore unknown authors in test
@@ -237,22 +243,27 @@ X_authors_test_ohe = ohe.transform(X_authors_test.values.reshape(-1, 1))
 
 # #### Title and Content features
 
-# In[175]:
+# In[67]:
 
 
-tf_idf_vecr = TfidfVectorizer(ngram_range=(1,2), max_features=100000)
+tf_idf_word = TfidfVectorizer(ngram_range=(1,2), analyzer='word',
+                              max_features=100000, stop_words='english',
+                              sublinear_tf=True, strip_accents='unicode')
+
+tf_idf_char = TfidfVectorizer(ngram_range=(1,4), analyzer='char', 
+                              max_features=5000, strip_accents='unicode')
 
 
-# In[176]:
+# In[85]:
 
 
-with open('data/generated/train_title.txt') as input_file:
-    X_title_train_tfidf = tf_idf_vecr.fit_transform(input_file)
+get_ipython().run_cell_magic('time', '', "with open('data/generated/train_title.txt') as input_file:\n    X_title_train_tfidfword = tf_idf_word.fit_transform(input_file)\nwith open('data/generated/train_title.txt') as input_file:\n    X_title_train_tfidfchar = tf_idf_char.fit_transform(input_file)\n\nwith open('data/generated/test_title.txt') as input_file:\n    X_title_test_tfidfword = tf_idf_word.transform(input_file)\nwith open('data/generated/test_title.txt') as input_file:\n    X_title_test_tfidfchar = tf_idf_char.transform(input_file)\n    \nX_title_train_tfidfword.shape, X_title_test_tfidfword.shape")
 
-with open('data/generated/test_title.txt') as input_file:
-    X_title_test_tfidf = tf_idf_vecr.transform(input_file)
-    
-X_title_train_tfidf.shape, X_title_test_tfidf.shape
+
+# In[86]:
+
+
+X_title_train_tfidfword.shape, X_title_test_tfidfword.shape
 
 
 # In[178]:

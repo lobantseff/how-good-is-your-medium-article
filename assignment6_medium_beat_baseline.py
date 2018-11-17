@@ -81,7 +81,7 @@ def read_json_line(line=None):
 
 # Extract features `content`, `published`, `title` and `author`, write them to separate files for train and test sets.
 
-# In[148]:
+# In[1]:
 
 
 def extract_features_and_write(path_to_data,

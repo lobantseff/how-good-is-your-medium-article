@@ -11789,7 +11789,7 @@ Baseline achieved: <strong>1.42869</strong></p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm_notebook</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm_notebook</span><span class="p">,</span> <span class="n">tqdm</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
@@ -11896,13 +11896,26 @@ Baseline achieved: <strong>1.42869</strong></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[66]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">clean</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">extract_features_and_write</span><span class="p">(</span><span class="n">path_to_data</span><span class="p">,</span>
                                <span class="n">inp_filename</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     
-    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">]</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;published&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;link_tags&#39;</span><span class="p">]</span>
     <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;train&#39;</span> <span class="k">if</span> <span class="n">is_train</span> <span class="k">else</span> <span class="s1">&#39;test&#39;</span>
     <span class="n">feature_files</span> <span class="o">=</span> <span class="p">[</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_data</span><span class="p">,</span> <span class="s1">&#39;generated&#39;</span><span class="p">,</span>
                                        <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.txt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">feat</span><span class="p">)),</span>
@@ -11912,13 +11925,13 @@ Baseline achieved: <strong>1.42869</strong></p>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_data</span><span class="p">,</span> <span class="n">inp_filename</span><span class="p">),</span> 
               <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp_json_file</span><span class="p">:</span>
 
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tqdm_notebook</span><span class="p">(</span><span class="n">inp_json_file</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">inp_json_file</span><span class="p">):</span>
             <span class="n">json_data</span> <span class="o">=</span> <span class="n">read_json_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">feature_files</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;content&#39;</span><span class="p">:</span>
-                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">strip_tags</span><span class="p">(</span>
-                        <span class="n">json_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">clean</span><span class="o">.</span><span class="n">cleaning</span><span class="p">(</span><span class="n">strip_tags</span><span class="p">(</span>
+                        <span class="n">json_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;published&#39;</span><span class="p">:</span>
                     <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;author&#39;</span><span class="p">:</span>
@@ -11940,11 +11953,11 @@ Baseline achieved: <strong>1.42869</strong></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/train.json&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
         <span class="n">jsond</span> <span class="o">=</span> <span class="n">read_json_line</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
 </pre></div>
 
@@ -11955,10 +11968,10 @@ Baseline achieved: <strong>1.42869</strong></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">jsond</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">jsond</span><span class="p">[</span><span class="s1">&#39;link_tags&#39;</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -11971,68 +11984,21 @@ Baseline achieved: <strong>1.42869</strong></p>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[6]:</div>
+<div class="prompt output_prompt">Out[38]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;_id&#39;: &#39;https://medium.com/@aelcenganda/%E9%96%A9%E6%9D%B1%E6%AD%B7%E5%8F%B2%E7%94%B0%E9%87%8E%E9%9A%A8%E7%AD%86-46851b6cfaa&#39;,
- &#39;_timestamp&#39;: 1519335838.5826209,
- &#39;_spider&#39;: &#39;medium&#39;,
- &#39;url&#39;: &#39;https://medium.com/@aelcenganda/%E9%96%A9%E6%9D%B1%E6%AD%B7%E5%8F%B2%E7%94%B0%E9%87%8E%E9%9A%A8%E7%AD%86-46851b6cfaa&#39;,
- &#39;domain&#39;: &#39;medium.com&#39;,
- &#39;published&#39;: {&#39;$date&#39;: &#39;2017-02-05T13:08:17.410Z&#39;},
- &#39;title&#39;: &#39;走入山與海之間：閩東大刀會和兩岸走私 – Yun-Chen Chien（簡韻真） – Medium&#39;,
- &#39;content&#39;: &#39;&lt;div&gt;&lt;header class=&#34;container u-maxWidth740&#34;&gt;&lt;div class=&#34;uiScale uiScale-ui--regular uiScale-caption--regular postMetaHeader u-paddingBottom10 row&#34;&gt;&lt;div class=&#34;col u-size12of12 js-postMetaLockup&#34;&gt;&lt;div class=&#34;uiScale uiScale-ui--regular uiScale-caption--regular postMetaLockup postMetaLockup--authorWithBio u-flexCenter js-postMetaLockup&#34;&gt;&lt;div class=&#34;u-flex0&#34;&gt;&lt;a class=&#34;link u-baseColor--link avatar&#34; href=&#34;https://medium.com/@aelcenganda?source=post_header_lockup&#34; data-action=&#34;show-user-card&#34; data-action-source=&#34;post_header_lockup&#34; data-action-value=&#34;fcc72a36edcb&#34; data-action-type=&#34;hover&#34; data-user-id=&#34;fcc72a36edcb&#34; dir=&#34;auto&#34;&gt;&lt;img src=&#34;https://cdn-images-1.medium.com/fit/c/120/120/1*OWuYVpy0SpLQoncjzr-AlA.jpeg&#34; class=&#34;avatar-image avatar-image--small&#34; alt=&#34;Go to the profile of Yun-Chen Chien（簡韻真）&#34;&gt;&lt;/a&gt;&lt;/div&gt;&lt;div class=&#34;u-flex1 u-paddingLeft15 u-overflowHidden&#34;&gt;&lt;div class=&#34;u-lineHeightTightest&#34;&gt;&lt;a class=&#34;ds-link ds-link--styleSubtle ui-captionStrong u-inlineBlock link link--darken link--darker&#34; href=&#34;https://medium.com/@aelcenganda?source=post_header_lockup&#34; data-action=&#34;show-user-card&#34; data-action-source=&#34;post_header_lockup&#34; data-action-value=&#34;fcc72a36edcb&#34; data-action-type=&#34;hover&#34; data-user-id=&#34;fcc72a36edcb&#34; dir=&#34;auto&#34;&gt;Yun-Chen Chien（簡韻真）&lt;/a&gt;&lt;span class=&#34;followState js-followState&#34; data-user-id=&#34;fcc72a36edcb&#34;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&#34;ui-caption ui-xs-clamp2 postMetaInline&#34;&gt;Nobody in @g0v.tw, PM in sense.tw to build online deliberation tools. Caring #civictech #opengov #startup. Now researching on Internet and open democracy.&lt;/div&gt;&lt;div class=&#34;ui-caption postMetaInline js-testPostMetaInlineSupplemental&#34;&gt;&lt;time datetime=&#34;2017-02-05T13:08:17.410Z&#34;&gt;Feb 5, 2017&lt;/time&gt;&lt;span class=&#34;middotDivider u-fontSize12&#34;&gt;&lt;/span&gt;&lt;span class=&#34;readingTime&#34; title=&#34;2 min read&#34;&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/header&gt;&lt;div class=&#34;postArticle-content js-postField js-notesSource js-trackedPost&#34; data-post-id=&#34;46851b6cfaa&#34; data-source=&#34;post_page&#34; data-tracking-context=&#34;postPage&#34;&gt;&lt;section name=&#34;e92b&#34; class=&#34;section section--body section--first section--last&#34;&gt;&lt;div class=&#34;section-divider&#34;&gt;&lt;hr class=&#34;section-divider&#34;&gt;&lt;/div&gt;&lt;div class=&#34;section-content&#34;&gt;&lt;div class=&#34;section-inner sectionLayout--insetColumn&#34;&gt;&lt;h1 name=&#34;d5c4&#34; id=&#34;d5c4&#34; class=&#34;graf graf--h3 graf--leading graf--title&#34;&gt;走入山與海之間：閩東大刀會和兩岸走私&lt;/h1&gt;&lt;figure name=&#34;cf83&#34; id=&#34;cf83&#34; class=&#34;graf graf--figure graf-after--h3&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 525px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 75%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*k9fkAT-nIsQEe97noGjUhA.jpeg&#34; data-width=&#34;3264&#34; data-height=&#34;2448&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*k9fkAT-nIsQEe97noGjUhA.jpeg&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*k9fkAT-nIsQEe97noGjUhA.jpeg&#34;&gt;&lt;/div&gt;&lt;/figure&gt;&lt;p name=&#34;bb13&#34; id=&#34;bb13&#34; class=&#34;graf graf--p graf-after--figure&#34;&gt;閩東海濱是個山接海的地方，沿海是小小的灣澳錯落，漁船或遠或近地停泊。當我們沿著海邊走時，羅士傑老師總會興奮地說：「你看這地方，多適合躲人，就一副海盜窩的樣子！」&lt;/p&gt;&lt;p name=&#34;29a1&#34; id=&#34;29a1&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;這是一句激動的讚美，因為我們來此的目的是探訪民國時期的民間宗教武裝結社還有兩岸走私貿易。&lt;/p&gt;&lt;figure name=&#34;670a&#34; id=&#34;670a&#34; class=&#34;graf graf--figure graf-after--p&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 394px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 56.3%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*VxbB6xFTQDIV3HXh2m9l2Q.png&#34; data-width=&#34;1136&#34; data-height=&#34;640&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*VxbB6xFTQDIV3HXh2m9l2Q.png&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*VxbB6xFTQDIV3HXh2m9l2Q.png&#34;&gt;&lt;/div&gt;&lt;figcaption class=&#34;imageCaption&#34;&gt;閩東沿岸的星星就是我們這次拜訪的地方。&lt;/figcaption&gt;&lt;/figure&gt;&lt;p name=&#34;9f10&#34; id=&#34;9f10&#34; class=&#34;graf graf--p graf-after--figure&#34;&gt;翻開閩東各地縣誌，從清末開始就充滿著各種倭寇進犯、禁烟令（禁止種植罌粟）、反洋教運動、取締花會捐（賭博）、緝鹽、民眾運動、走私。&lt;/p&gt;&lt;p name=&#34;0f18&#34; id=&#34;0f18&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;其中兩件事特別吸引了我們的注意。&lt;/p&gt;&lt;p name=&#34;1db6&#34; id=&#34;1db6&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;一是民國 32 年（1943 年）的大刀會暴動，聚集千餘人攻陷穆陽，國民黨政府緊急鎮壓，在民國 33 年處決首犯數餘人。大刀會是由地方仕紳組織成立的地方宗教團體「同善社」所延伸出來的武裝組織，目的是「防匪保家」。例如福安的同善社在民國 10 年創立於文昌祠樓上，民國 28 年反對當時縣長而暴動，有卸任知縣參與，被指控與「海匪」勾結，被指控以法師號召民眾、拜畸形兒做皇帝。後各地組織有與地方組織紅帶會結盟或對立，被國民黨肅清或接受國民黨資助對抗共產黨。&lt;/p&gt;&lt;p name=&#34;092f&#34; id=&#34;092f&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;這些所謂的「反動會道門」組織，一直在民間繼續傳佈，直到 1950-1960 年中國共產黨大力取締殲滅瑤池道、先天道、老母道、龍華道等「反動會道門」組織，才逐漸銷聲匿跡。&lt;/p&gt;&lt;p name=&#34;c795&#34; id=&#34;c795&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;二是綿延不斷的兩岸走私貿易。1950\&#39;s - 1960\&#39;s 兩岸仍不斷互相砲擊、飛偵測機、心戰喊話，甚至美軍和國民黨有空投昆蟲和細菌，縣誌上則記載陸續逮捕國民黨特務還有與海上保安隊對抗的紀錄。但有趣的是，在兩岸正式交流之前，1979 年三沙台灣漁民接待站就竣工了，1984 年後開始破獲走私，像是 1991 年霞浦破獲走私香菸三百多萬元，其他熱門走私品包括手錶、漁穫等。&lt;/p&gt;&lt;p name=&#34;b365&#34; id=&#34;b365&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;我們循著這兩條線索踏入閩東，展開歷史田野。身為歷史學家，老師有興趣的題目一直是「民間如何應對現代國家」，尤其以宗教作為地方組織的力量切入。&lt;/p&gt;&lt;p name=&#34;8910&#34; id=&#34;8910&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;如果單從檔案字面上看，我們很容易就對國家的敘事買單，但老師將民間視作有能動性的各種群體，有自己的邏輯，用自己的方法在跟所謂的「國家」互動。大概就是所謂的上有政策下有對策。&lt;/p&gt;&lt;p name=&#34;01b1&#34; id=&#34;01b1&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;這次文獻所引出的幾個有趣問題是，同善社、大刀會這樣的宗教紐帶，如何建立起地方武裝力量，他們又是如何與國民黨/中華民國、共產黨/中華人民共和國互動？同善社、大刀會這樣的宗教組織，也不若之前許多文獻中以廟宇為中心的討論地方的方法，而是以佛堂、法師為中心的組織。這樣的宗教組織，如何面對現代性的國家？尤其是當進入冷戰格局的兩岸對峙，對於地方脈絡來說，共產黨、國民黨、合法、非法的認知，還有國家對於他們來說又是什麼呢？&lt;/p&gt;&lt;h4 name=&#34;f1be&#34; id=&#34;f1be&#34; class=&#34;graf graf--h4 graf-after--p&#34;&gt;宗教與地方&lt;/h4&gt;&lt;/div&gt;&lt;div class=&#34;section-inner sectionLayout--outsetColumn&#34;&gt;&lt;figure name=&#34;7d21&#34; id=&#34;7d21&#34; class=&#34;graf graf--figure graf--layoutOutsetCenter graf-after--h4&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 1000px; max-height: 750px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 75%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*tZgL2QLzxVYGwC0vs_995w.jpeg&#34; data-width=&#34;3264&#34; data-height=&#34;2448&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*tZgL2QLzxVYGwC0vs_995w.jpeg&#34; src=&#34;https://cdn-images-1.medium.com/max/2000/1*tZgL2QLzxVYGwC0vs_995w.jpeg&#34;&gt;&lt;/div&gt;&lt;figcaption class=&#34;imageCaption&#34;&gt;三沙冬澳媽祖宮前&lt;/figcaption&gt;&lt;/figure&gt;&lt;/div&gt;&lt;div class=&#34;section-inner sectionLayout--insetColumn&#34;&gt;&lt;p name=&#34;9db6&#34; id=&#34;9db6&#34; class=&#34;graf graf--p graf-after--figure&#34;&gt;老師上課總愛開玩笑說，在華南做宗教地方研究就是進村找廟、進廟找碑。&lt;/p&gt;&lt;p name=&#34;5f4a&#34; id=&#34;5f4a&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;這句話一半對。&lt;/p&gt;&lt;p name=&#34;0d39&#34; id=&#34;0d39&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;我們的確沿著舊時的海岸線，探訪了幾間天后宮、文武靈王廟，往外眺望曾經是海的地方。也在前岐的天后宮撒麵粉抄錄了奉憲示禁碑，從前岐這個明礬出口的河口，一路追到靠近溫州的明礬主要產地礬山鎮。（這是另外一個有意思的明礬貿易與「階級革命」的故事了，老師說應該可以寫一篇碩論了）&lt;/p&gt;&lt;p name=&#34;b6f7&#34; id=&#34;b6f7&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;但就像在字裡行間看出微言大義，我們在找官方敘事之外的民間故事還有廟宇之外的地方宗教運作方式。&lt;/p&gt;&lt;p name=&#34;0d1e&#34; id=&#34;0d1e&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;根據當時的調查文獻上，所謂的「反動會道門」有各式各樣職業，許多是城市小資產階級，不乏外地人，設壇於民宅中，由法師定時帶領會眾誦經行法事。老師解釋說宗教不只是逢年過節祭拜而已，需要形成團體互相支持。但在我看來這樣的組織是平行於媽祖信仰的、文武靈王、華光大帝的一種信仰方式，不然直接以媽祖做為號召即可，何必再搞出一個老母娘/瑤池金母在拜呢？地方上的宗教組織，可能是有好幾個宗教團體相互拮抗，像是如今的一貫道與媽祖信仰平行吸納群眾信仰。&lt;/p&gt;&lt;p name=&#34;be67&#34; id=&#34;be67&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;反動會道門在 1960’s 後基本上銷聲匿跡，這種祕密宗教組織也難以短時間與當地人聊天取得資訊。不過我們在三沙找到天地壇，裡面祭拜當年的壇主與不知名神明。也在天后宮裡發現兼拜奶娘。或是記述毛一、毛二法師行至羅源一帶弘法治病。&lt;/p&gt;&lt;p name=&#34;4573&#34; id=&#34;4573&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;在連江一帶則沿路多佛堂，有師父定時帶領誦經念課。其中一個佛堂裡的顧堂大嬸跟我們表示，這間佛堂本在偏僻山中，由「菜友」集資買下現在這塊地，興建佛堂，觀看廟牆上的捐獻紀錄多見女性，呼應文獻上鄉村中老年女性藉由宗教活動脫離家庭責任。拜觀音需脫鞋，旁邊則是一個食堂，有桌椅和廚房供集會之用。佛堂也更進一步與安養系統整合，我們進到一個直接名為「安養念佛堂」的佛堂，裡面有三十多位年長居士居住，兩三位師父，富麗堂皇。&lt;/p&gt;&lt;p name=&#34;3983&#34; id=&#34;3983&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;不過這樣的宗教組織聯繫，有沒有在兩岸之間牽起貿易網絡呢？這點還不是很清楚。或是宗教武裝組織如何與現代化互動？在文獻看起來，大刀會這批人先是被國民黨認為是迷信的地方組織需要清肅，後抗日又有合作，又與共產黨不合，國民黨在 1949 年撤退後還提供機關槍供其對抗共產黨。&lt;/p&gt;&lt;p name=&#34;ccdf&#34; id=&#34;ccdf&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;宗教在地方的形式會經過許多轉化與整合，例如這次拜訪的許多廟宇是在西元兩千年後才修建，可視為配合地方復興政策，或是那時鄉村真的開始富起來了，或是配合統戰政策，例如一間天后宮牆上貼著胡錦濤 2006 年 1 月時的談話：「媽祖信仰深深的紮根在台灣民眾的精神生活中，我們要運用好這一豐富資源，在促進兩岸交流中更好地發揮作用。」許多廟宇也與地方文化禮堂結合，一樓是挑高的禮堂活動空間，二樓則是廟。&lt;/p&gt;&lt;p name=&#34;8f16&#34; id=&#34;8f16&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;最絕的可能是我們走訪的一間鄭氏宗祠，上面掛了三個匾額：文化禮堂、鄭成功紀念館、鄭氏宗祠。看起來顯然是為了拿補助，一口氣讓整個場館多功能，一樓有球桌和很大的鄭成功塑像，二樓則是宗祠。這可視為地方對於政策的一種應對，以政策要求的外殼包裝地方需求。&lt;/p&gt;&lt;h4 name=&#34;0294&#34; id=&#34;0294&#34; class=&#34;graf graf--h4 graf-after--p&#34;&gt;從大陸面對海洋：敵人還是朋友？&lt;/h4&gt;&lt;p name=&#34;c529&#34; id=&#34;c529&#34; class=&#34;graf graf--p graf-after--h4&#34;&gt;「祖國大陸距離馬祖最近的地方」，大大的標語掛在連江縣黃岐鎮的入口。&lt;/p&gt;&lt;p name=&#34;34c3&#34; id=&#34;34c3&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;的確很近，1950 年馬祖駐軍砲擊黃岐鎮，三十多座民房被毀。&lt;/p&gt;&lt;p name=&#34;e156&#34; id=&#34;e156&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;如今在黃岐小三通的客運碼頭，寫著「連江縣同胞熱烈歡迎台灣同胞拜訪祖國大陸」，一天各兩班船班往返馬祖，航程不到三十分鐘。&lt;/p&gt;&lt;p name=&#34;07cc&#34; id=&#34;07cc&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;港口旁是頂著斗笠在補網的漁民，直接把網鋪開在馬路上，有羊在旁邊悠閒的晃蕩，不遠處則是船員介紹所。&lt;/p&gt;&lt;p name=&#34;f554&#34; id=&#34;f554&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;這裡講的方言屬福州系統，但在其他許多靠海的小漁村裡，雖靠近福州，我們竟可以以閩南語通行。老師一個想像是閩南語人群是海上的人，因此靠海的港口可能會有閩南語。閩東可能是最後一個蜑民上岸的地方。&lt;/p&gt;&lt;figure name=&#34;94bf&#34; id=&#34;94bf&#34; class=&#34;graf graf--figure graf-after--p&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 525px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 75%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*jniXEWnGBXwtNDSC1Djkpw.jpeg&#34; data-width=&#34;3264&#34; data-height=&#34;2448&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*jniXEWnGBXwtNDSC1Djkpw.jpeg&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*jniXEWnGBXwtNDSC1Djkpw.jpeg&#34;&gt;&lt;/div&gt;&lt;figcaption class=&#34;imageCaption&#34;&gt;水上仍有人家&lt;/figcaption&gt;&lt;/figure&gt;&lt;p name=&#34;90ad&#34; id=&#34;90ad&#34; class=&#34;graf graf--p graf-after--figure&#34;&gt;我們跑了五天的沿海漁村，其實面貌各異。&lt;/p&gt;&lt;p name=&#34;80f8&#34; id=&#34;80f8&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;除了傳統的小漁村，有的地方建造海堤把河口內海做為農地，有的地方填海造建鋼鐵廠、核電廠或是一座每棟建築都二十層樓高且長的一模一樣的新城，也有些地方開一般的工廠，村裡的大街在辦年貨擠的水泄不通。&lt;/p&gt;&lt;p name=&#34;5cef&#34; id=&#34;5cef&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;也有些地方布滿的解放軍的軍事基地，商業化大概就無緣了。這也不奇怪，閩東歷來就有許多海防的衛所，我們拜訪了定海古城和浦城。衛所是明代的軍事制度，從外地派駐軍隊，駐紮在高牆圍起的城裡，佔據海防要地，依山傍海，山後有屯田。不過如今駐紮於此的解放軍，許多都是劃在南京軍區下的南方人，很多是福建人。&lt;/p&gt;&lt;p name=&#34;a6cd&#34; id=&#34;a6cd&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;我們跟身著藍色迷彩服的解放軍一同搭船前往三都澳，&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E5%85%89%E7%BB%AA&#34; data-href=&#34;https://zh.wikipedia.org/wiki/%E5%85%89%E7%BB%AA&#34; class=&#34;markup--anchor markup--p-anchor&#34; title=&#34;光緒&#34; rel=&#34;nofollow noopener&#34; target=&#34;_blank&#34;&gt;光緒&lt;/a&gt;二十三年正式開放作為對外通商口岸，設置海關。街上一片蕭索，我們氣喘吁吁爬上了一座山坡，俯瞰整個三都澳的港灣，山頭上座落著教堂還有貌似海關/洋行的歐式建築。&lt;/p&gt;&lt;/div&gt;&lt;div class=&#34;section-inner sectionLayout--outsetRow&#34; data-paragraph-count=&#34;2&#34;&gt;&lt;figure name=&#34;a3fb&#34; id=&#34;a3fb&#34; class=&#34;graf graf--figure graf--layoutOutsetRow is-partialWidth graf-after--p&#34; style=&#34;width: 50%;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 75%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*Ot4g8_WsuzUbCKzUGUVRRw.jpeg&#34; data-width=&#34;3264&#34; data-height=&#34;2448&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*Ot4g8_WsuzUbCKzUGUVRRw.jpeg&#34; src=&#34;https://cdn-images-1.medium.com/max/1200/1*Ot4g8_WsuzUbCKzUGUVRRw.jpeg&#34;&gt;&lt;/div&gt;&lt;/figure&gt;&lt;figure name=&#34;4acb&#34; id=&#34;4acb&#34; class=&#34;graf graf--figure graf--layoutOutsetRowContinue is-partialWidth graf-after--figure&#34; style=&#34;width: 50%;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 75%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*IJZRCu9OV8eCCxiNSKToSA.jpeg&#34; data-width=&#34;3264&#34; data-height=&#34;2448&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*IJZRCu9OV8eCCxiNSKToSA.jpeg&#34; src=&#34;https://cdn-images-1.medium.com/max/1200/1*IJZRCu9OV8eCCxiNSKToSA.jpeg&#34;&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/div&gt;&lt;div class=&#34;section-inner sectionLayout--insetColumn&#34;&gt;&lt;p name=&#34;3e26&#34; id=&#34;3e26&#34; class=&#34;graf graf--p graf-after--figure&#34;&gt;我們跟一個在解放軍部隊待了十二年的大哥聊天，他說：「我恨死陳水扁了。我那時請假回家結婚，結果結婚前一天接到士官長的電話要我回部隊『戰備』，就只因為陳水扁要參選，還是長官給我方便，給我說成是去遼寧，趕回部隊要三天，我才結到婚的。但之後每次跟老婆吵架，她就會說：『我從結婚那天就看你很不順眼了！』」&lt;/p&gt;&lt;p name=&#34;5964&#34; id=&#34;5964&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;我啃著繼光餅（對，就是傳說戚繼光打倭寇時做的餅），聽老師跟大哥聊抓逃兵聊得不亦樂乎，原來兩岸抓逃兵的 SOP 和規定是一樣的啊！大哥說兩岸和平該有多好，大家都是可以交朋友嘛。&lt;/p&gt;&lt;p name=&#34;9d87&#34; id=&#34;9d87&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;說到走私，當地人說船體通體漆黑，沒有船舷，開得飛快，海防艦艇追不上。其中買賣油是筆好生意，台灣漁民會把油加滿開到公海上，大陸這頭的漁民再去取油，兩方心照不宣。沿途也有看到佔地甚廣的台灣漁民招待所。這些招待所建在兩岸正式通航之前。這些「漁民」在此之前可能被視作「特務」，從請吃子彈到請喝茶互相作為心戰宣傳管道。&lt;/p&gt;&lt;p name=&#34;9185&#34; id=&#34;9185&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;其實走私沒我們想像的那麼遠。從廈門小三通回台灣時，當地旅行社的櫃檯一直要我們「帶包香菇」，一個人給你一百元人民幣。當時直接拒絕了，很怕不是真的香菇，但上網查了之後發現好像是真的香菇，只是台灣跟中國的香菇價差太大了。&lt;/p&gt;&lt;h4 name=&#34;d2d3&#34; id=&#34;d2d3&#34; class=&#34;graf graf--h4 graf-after--p&#34;&gt;雜記&lt;/h4&gt;&lt;p name=&#34;84d9&#34; id=&#34;84d9&#34; class=&#34;graf graf--p graf-after--h4&#34;&gt;文章最後還是沒回答文章一開始針對宗教與走私所提出的大問題，只是用這樣的角度看民間社會與現代國家的互動會很有趣，就請大家期待老師的論文吧！&lt;/p&gt;&lt;p name=&#34;911e&#34; id=&#34;911e&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;這趟走下來，除了推論歷史，我不斷提醒自己的是要去看見那些互聯網之外的地方，尤其我們走在那些百度地圖上沒有的小路上時。羅士傑老師一向關注人是怎麼活著的，我則在思考當我們說著公民科技的時候，這樣的科技對於農村的人生活影響能有多少，有科技就能翻轉政治權力嗎？還是需整合舊有的民間凝聚力量？下一代的農村年輕人還會依附於宗教上嗎？他們信仰的會是什麼？&lt;/p&gt;&lt;p name=&#34;4e9e&#34; id=&#34;4e9e&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;老師回台灣的路上一直在講台灣人年輕人\u200a—\u200a尤其是要台獨的人\u200a—\u200a對中國不夠瞭解，不理解中國年輕人的話題也不瞭解農村。&lt;/p&gt;&lt;p name=&#34;5382&#34; id=&#34;5382&#34; class=&#34;graf graf--p graf-after--p&#34;&gt;福建鄉下地方過年熱鬧的緊，鎮上那條大街整排的樹都掛上了紅燈籠，採買年貨的人穿梭在狂按喇吧的車陣中，幾個小孩蹦跳而過，老師轉身問我：「你覺得十年後這些小孩會在做什麼？」&lt;/p&gt;&lt;figure name=&#34;df83&#34; id=&#34;df83&#34; class=&#34;graf graf--figure graf-after--p&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 525px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 75%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*YE7nnWU0ib29U7eidJvGTA.jpeg&#34; data-width=&#34;3264&#34; data-height=&#34;2448&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*YE7nnWU0ib29U7eidJvGTA.jpeg&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*YE7nnWU0ib29U7eidJvGTA.jpeg&#34;&gt;&lt;/div&gt;&lt;/figure&gt;&lt;h4 name=&#34;9daf&#34; id=&#34;9daf&#34; class=&#34;graf graf--h4 graf-after--figure&#34;&gt;&lt;strong class=&#34;markup--strong markup--h4-strong&#34;&gt;附錄&lt;/strong&gt;&lt;/h4&gt;&lt;p name=&#34;2e61&#34; id=&#34;2e61&#34; class=&#34;graf graf--p graf-after--h4&#34;&gt;感謝臺大歷史系羅士傑教授，以及台大歷史所學姐鄭凌霄，學姐正好是福州羅源人，一路上張羅田野行程還有方言翻譯。出田野有在地人真的很重要啊！&lt;/p&gt;&lt;figure name=&#34;e40d&#34; id=&#34;e40d&#34; class=&#34;graf graf--figure graf-after--p&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 373px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 53.300000000000004%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*T25CE5uDnSDlQZLUvnC_jA.png&#34; data-width=&#34;1043&#34; data-height=&#34;556&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*T25CE5uDnSDlQZLUvnC_jA.png&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*T25CE5uDnSDlQZLUvnC_jA.png&#34;&gt;&lt;/div&gt;&lt;figcaption class=&#34;imageCaption&#34;&gt;福安縣誌 p697&lt;/figcaption&gt;&lt;/figure&gt;&lt;figure name=&#34;34ed&#34; id=&#34;34ed&#34; class=&#34;graf graf--figure graf-after--figure&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 283px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 40.5%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*d_R4AhL2TbrXx_35ry8V3w.png&#34; data-width=&#34;1020&#34; data-height=&#34;413&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*d_R4AhL2TbrXx_35ry8V3w.png&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*d_R4AhL2TbrXx_35ry8V3w.png&#34;&gt;&lt;/div&gt;&lt;figcaption class=&#34;imageCaption&#34;&gt;福安縣誌 p698&lt;/figcaption&gt;&lt;/figure&gt;&lt;figure name=&#34;7066&#34; id=&#34;7066&#34; class=&#34;graf graf--figure graf-after--figure&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 403px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 57.599999999999994%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*7W1n8VUI2Mimw8R1kIo_gw.png&#34; data-width=&#34;1087&#34; data-height=&#34;626&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*7W1n8VUI2Mimw8R1kIo_gw.png&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*7W1n8VUI2Mimw8R1kIo_gw.png&#34;&gt;&lt;/div&gt;&lt;/figure&gt;&lt;figure name=&#34;daa5&#34; id=&#34;daa5&#34; class=&#34;graf graf--figure graf-after--figure&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder is-locked&#34; style=&#34;max-width: 700px; max-height: 413px;&#34;&gt;&lt;div class=&#34;aspectRatioPlaceholder-fill&#34; style=&#34;padding-bottom: 59%;&#34;&gt;&lt;/div&gt;&lt;img class=&#34;graf-image&#34; data-image-id=&#34;1*cYbXbY1wA2NbSAOWTSY_OA.png&#34; data-width=&#34;1051&#34; data-height=&#34;620&#34; data-action=&#34;zoom&#34; data-action-value=&#34;1*cYbXbY1wA2NbSAOWTSY_OA.png&#34; src=&#34;https://cdn-images-1.medium.com/max/1600/1*cYbXbY1wA2NbSAOWTSY_OA.png&#34;&gt;&lt;/div&gt;&lt;figcaption class=&#34;imageCaption&#34;&gt;福安縣誌 p733,734&lt;/figcaption&gt;&lt;/figure&gt;&lt;p name=&#34;7d99&#34; id=&#34;7d99&#34; class=&#34;graf graf--p graf-after--figure graf--trailing&#34;&gt;回台灣的路上，跟老師聊大學教育，老師說：「大學是年輕人最有餘裕思考人文問題的人，我們卻要急著將他們往職場推。」對我而言是以正向心態擁抱自己的餘裕，且越發覺得自己念的書太少，要多讀書。&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;&lt;footer class=&#34;u-paddingTop10&#34;&gt;&lt;div class=&#34;container u-maxWidth740&#34;&gt;&lt;div class=&#34;row&#34;&gt;&lt;div class=&#34;col u-size12of12&#34;&gt;&lt;div class=&#34;postMetaInline postMetaInline--acknowledgments u-paddingTop5 u-paddingBottom20 js-postMetaAcknowledgments&#34;&gt;&lt;a class=&#34;link u-baseColor--link&#34; href=&#34;http://creativecommons.org/licenses/by/4.0/&#34; rel=&#34;license cc:license&#34; target=&#34;_blank&#34; data-tooltip=&#34;Except where otherwise noted, this work is licensed under a Creative Commons Attribution 4.0 International license by the author.&#34;&gt;Some rights reserved&lt;/a&gt;&lt;span class=&#34;postMetaInline-licenseIcons u-marginLeft5&#34;&gt;&lt;span title=&#34;You can distribute, remix, and build upon this work as long as you credit the author.&#34;&gt;&lt;span class=&#34;svgIcon svgIcon--creativeCommonsBy svgIcon--21px&#34;&gt;&lt;svg class=&#34;svgIcon-use&#34; width=&#34;21&#34; height=&#34;21&#34; viewbox=&#34;0 0 21 21&#34;&gt;&lt;path d=&#34;M10.485 2c2.387 0 4.4.82 6.04 2.46C18.175 6.107 19 8.12 19 10.5c0 2.388-.81 4.376-2.43 5.965C14.85 18.155 12.823 19 10.486 19c-2.298 0-4.29-.835-5.98-2.505C2.836 14.825 2 12.827 2 10.5s.835-4.34 2.505-6.04C6.145 2.82 8.137 2 10.485 2zm.03 1.533c-1.933 0-3.567.678-4.903 2.034-1.386 1.417-2.08 3.06-2.08 4.933 0 1.882.69 3.512 2.065 4.887 1.376 1.377 3.015 2.064 4.918 2.064 1.892 0 3.54-.69 4.948-2.07 1.336-1.28 2.004-2.91 2.004-4.87 0-1.93-.68-3.57-2.034-4.93-1.356-1.35-2.995-2.03-4.918-2.03zm2.277 4.857v3.476h-.97v4.128H9.18v-4.128h-.972V8.39a.53.53 0 0 1 .16-.387.528.528 0 0 1 .387-.16h3.49c.143 0 .27.054.38.16a.52.52 0 0 1 .167.387zM9.316 6.205c0-.8.394-1.2 1.184-1.2.79 0 1.184.4 1.184 1.2 0 .79-.395 1.183-1.184 1.183-.79 0-1.184-.394-1.184-1.183z&#34; fill-rule=&#34;evenodd&#34;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt; &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;row&#34;&gt;&lt;div class=&#34;col u-size12of12 js-postTags&#34;&gt;&lt;div class=&#34;u-paddingBottom10&#34;&gt;&lt;ul class=&#34;tags tags--postTags tags--borderless&#34;&gt;&lt;li&gt;&lt;a class=&#34;link u-baseColor--link&#34; href=&#34;https://medium.com/tag/%E7%94%B0%E9%87%8E?source=post&#34; data-action-source=&#34;post&#34;&gt;田野&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&#34;link u-baseColor--link&#34; href=&#34;https://medium.com/tag/%E6%AD%B7%E5%8F%B2?source=post&#34; data-action-source=&#34;post&#34;&gt;歷史&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&#34;link u-baseColor--link&#34; href=&#34;https://medium.com/tag/%E9%96%A9%E6%9D%B1?source=post&#34; data-action-source=&#34;post&#34;&gt;閩東&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&#34;link u-baseColor--link&#34; href=&#34;https://medium.com/tag/%E5%A4%A7%E5%88%80%E6%9C%83?source=post&#34; data-action-source=&#34;post&#34;&gt;大刀會&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a class=&#34;link u-baseColor--link&#34; href=&#34;https://medium.com/tag/%E8%B5%B0%E7%A7%81?source=post&#34; data-action-source=&#34;post&#34;&gt;走私&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;section class=&#34;uiScale uiScale-ui--small uiScale-caption--regular u-borderTopLightest u-marginTop10 u-paddingTop20&#34;&gt;&lt;div class=&#34;ui-h3 u-textColorDarker u-fontSize22&#34;&gt;One clap, two clap, three clap, forty?&lt;/div&gt;&lt;p class=&#34;ui-body u-marginBottom20 u-textColorDark u-fontSize16&#34;&gt;By clapping more or less, you can signal to us which stories really stand out.&lt;/p&gt;&lt;/section&gt;&lt;div class=&#34;postActions js-postActionsFooter&#34;&gt;&lt;div class=&#34;u-flexCenter&#34;&gt;&lt;div class=&#34;u-flex1&#34;&gt;&lt;div class=&#34;multirecommend js-actionMultirecommend u-flexCenter u-width60&#34; data-post-id=&#34;46851b6cfaa&#34; data-is-icon-29px=&#34;true&#34; data-is-circle=&#34;true&#34; data-has-recommend-list=&#34;true&#34; data-source=&#34;post_actions_footer-----46851b6cfaa---------------------clap_footer&#34;&gt;&lt;div class=&#34;u-relative u-foreground&#34;&gt;&lt;div class=&#34;clapUndo u-width60 u-round u-height32 u-absolute u-borderBox u-paddingRight5 u-transition--transform200Spring u-background--brandSageLighter js-clapUndo&#34; style=&#34;top: 14px; padding: 2px;&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;span class=&#34;u-textAlignCenter u-relative u-background js-actionMultirecommendCount u-marginLeft10&#34;&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;buttonSet u-flex0&#34;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;u-maxWidth740 u-paddingTop20 u-marginTop20 u-borderTopLightest container u-paddingBottom20 u-xs-paddingBottom10 js-postAttributionFooterContainer&#34;&gt;&lt;div class=&#34;row js-postFooterInfo&#34;&gt;&lt;div class=&#34;col u-size12of12&#34;&gt;&lt;li class=&#34;uiScale uiScale-ui--small uiScale-caption--regular u-block u-paddingBottom18 js-cardUser&#34;&gt;&lt;div class=&#34;u-marginLeft20 u-floatRight&#34;&gt;&lt;span class=&#34;followState js-followState&#34; data-user-id=&#34;fcc72a36edcb&#34;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&#34;u-tableCell&#34;&gt;&lt;a class=&#34;link u-baseColor--link avatar&#34; href=&#34;https://medium.com/@aelcenganda?source=footer_card&#34; title=&#34;Go to the profile of Yun-Chen Chien（簡韻真）&#34; aria-label=&#34;Go to the profile of Yun-Chen Chien（簡韻真）&#34; data-action-source=&#34;footer_card&#34; data-user-id=&#34;fcc72a36edcb&#34; dir=&#34;auto&#34;&gt;&lt;img src=&#34;https://cdn-images-1.medium.com/fit/c/120/120/1*OWuYVpy0SpLQoncjzr-AlA.jpeg&#34; class=&#34;avatar-image avatar-image--small&#34; alt=&#34;Go to the profile of Yun-Chen Chien（簡韻真）&#34;&gt;&lt;/a&gt;&lt;/div&gt;&lt;div class=&#34;u-tableCell u-verticalAlignMiddle u-breakWord u-paddingLeft15&#34;&gt;&lt;h3 class=&#34;ui-h3 u-fontSize18 u-lineHeightTighter u-marginBottom4&#34;&gt;&lt;a class=&#34;link link--primary u-accentColor--hoverTextNormal&#34; href=&#34;https://medium.com/@aelcenganda&#34; property=&#34;cc:attributionName&#34; title=&#34;Go to the profile of Yun-Chen Chien（簡韻真）&#34; aria-label=&#34;Go to the profile of Yun-Chen Chien（簡韻真）&#34; rel=&#34;author cc:attributionUrl&#34; data-user-id=&#34;fcc72a36edcb&#34; dir=&#34;auto&#34;&gt;Yun-Chen Chien（簡韻真）&lt;/a&gt;&lt;/h3&gt;&lt;p class=&#34;ui-body u-fontSize14 u-lineHeightBaseSans u-textColorDark u-marginBottom4&#34;&gt;Nobody in &lt;a href=&#34;http://twitter.com/g0v&#34; target=&#34;_blank&#34; title=&#34;Twitter profile for @g0v&#34;&gt;@g0v&lt;/a&gt;.tw, PM in sense.tw to build online deliberation tools. Caring #civictech #opengov #startup. Now researching on Internet and open democracy.&lt;/p&gt;&lt;/div&gt;&lt;/li&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;js-postFooterPlacements&#34;&gt;&lt;/div&gt;&lt;div class=&#34;u-padding0 u-clearfix u-backgroundGrayLightest u-print-hide supplementalPostContent js-responsesWrapper&#34;&gt;&lt;/div&gt;&lt;div class=&#34;supplementalPostContent js-heroPromo&#34;&gt;&lt;/div&gt;&lt;/footer&gt;&lt;/div&gt;&#39;,
- &#39;author&#39;: {&#39;name&#39;: None,
-  &#39;url&#39;: &#39;https://medium.com/@aelcenganda&#39;,
-  &#39;twitter&#39;: &#39;@aelcenganda&#39;},
- &#39;image_url&#39;: &#39;https://cdn-images-1.medium.com/max/1200/1*k9fkAT-nIsQEe97noGjUhA.jpeg&#39;,
- &#39;tags&#39;: [],
- &#39;link_tags&#39;: {&#39;canonical&#39;: &#39;https://medium.com/@aelcenganda/%E9%96%A9%E6%9D%B1%E6%AD%B7%E5%8F%B2%E7%94%B0%E9%87%8E%E9%9A%A8%E7%AD%86-46851b6cfaa&#39;,
-  &#39;publisher&#39;: &#39;https://plus.google.com/103654360130207659246&#39;,
-  &#39;author&#39;: &#39;https://medium.com/@aelcenganda&#39;,
-  &#39;search&#39;: &#39;/osd.xml&#39;,
-  &#39;alternate&#39;: &#39;android-app://com.medium.reader/https/medium.com/p/46851b6cfaa&#39;,
-  &#39;stylesheet&#39;: &#39;https://cdn-static-1.medium.com/_/fp/css/main-branding-base.dHv3MHpy06pRs4706uR7tg.css&#39;,
-  &#39;icon&#39;: &#39;https://cdn-static-1.medium.com/_/fp/icons/favicon-rebrand-medium.3Y6xpZ-0FSdWDnPM3hSBIA.ico&#39;,
-  &#39;apple-touch-icon&#39;: &#39;https://cdn-images-1.medium.com/fit/c/120/120/1*8I-HPL0bfoIzGied-dzOvA.png&#39;,
-  &#39;mask-icon&#39;: &#39;https://cdn-static-1.medium.com/_/fp/icons/monogram-mask.KPLCSFEZviQN0jQ7veN2RQ.svg&#39;},
- &#39;meta_tags&#39;: {&#39;viewport&#39;: &#39;width=device-width, initial-scale=1&#39;,
-  &#39;title&#39;: &#39;走入山與海之間：閩東大刀會和兩岸走私 – Yun-Chen Chien（簡韻真） – Medium&#39;,
-  &#39;referrer&#39;: &#39;unsafe-url&#39;,
-  &#39;description&#39;: &#39;閩東海濱是個山接海的地方，沿海是小小的灣澳錯落，漁船或遠或近地停泊。當我們沿著海邊走時，羅士傑老師總會興奮地說：「你看這地方，多適合躲人，就一副海盜窩的樣子！」. “走入山與海之間：閩東大刀會和兩岸走私” is published by Yun-Chen Chien（簡韻真）&#39;,
-  &#39;theme-color&#39;: &#39;#000000&#39;,
-  &#39;og:title&#39;: &#39;走入山與海之間：閩東大刀會和兩岸走私 – Yun-Chen Chien（簡韻真） – Medium&#39;,
-  &#39;og:url&#39;: &#39;https://medium.com/@aelcenganda/%E9%96%A9%E6%9D%B1%E6%AD%B7%E5%8F%B2%E7%94%B0%E9%87%8E%E9%9A%A8%E7%AD%86-46851b6cfaa&#39;,
-  &#39;og:image&#39;: &#39;https://cdn-images-1.medium.com/max/1200/1*k9fkAT-nIsQEe97noGjUhA.jpeg&#39;,
-  &#39;fb:app_id&#39;: &#39;542599432471018&#39;,
-  &#39;og:description&#39;: &#39;閩東海濱是個山接海的地方，沿海是小小的灣澳錯落，漁船或遠或近地停泊。當我們沿著海邊走時，羅士傑老師總會興奮地說：「你看這地方，多適合躲人，就一副海盜窩的樣子！」&#39;,
-  &#39;twitter:description&#39;: &#39;閩東海濱是個山接海的地方，沿海是小小的灣澳錯落，漁船或遠或近地停泊。當我們沿著海邊走時，羅士傑老師總會興奮地說：「你看這地方，多適合躲人，就一副海盜窩的樣子！」&#39;,
-  &#39;twitter:image:src&#39;: &#39;https://cdn-images-1.medium.com/max/1200/1*k9fkAT-nIsQEe97noGjUhA.jpeg&#39;,
-  &#39;author&#39;: &#39;Yun-Chen Chien（簡韻真）&#39;,
-  &#39;og:type&#39;: &#39;article&#39;,
-  &#39;twitter:card&#39;: &#39;summary_large_image&#39;,
-  &#39;article:publisher&#39;: &#39;https://www.facebook.com/medium&#39;,
-  &#39;article:author&#39;: &#39;https://medium.com/@aelcenganda&#39;,
-  &#39;robots&#39;: &#39;index, follow&#39;,
-  &#39;article:published_time&#39;: &#39;2017-02-05T13:08:17.410Z&#39;,
-  &#39;twitter:creator&#39;: &#39;@aelcenganda&#39;,
-  &#39;twitter:site&#39;: &#39;@Medium&#39;,
-  &#39;og:site_name&#39;: &#39;Medium&#39;,
-  &#39;twitter:label1&#39;: &#39;Reading time&#39;,
-  &#39;twitter:data1&#39;: &#39;2 min read&#39;,
-  &#39;twitter:app:name:iphone&#39;: &#39;Medium&#39;,
-  &#39;twitter:app:id:iphone&#39;: &#39;828256236&#39;,
-  &#39;twitter:app:url:iphone&#39;: &#39;medium://p/46851b6cfaa&#39;,
-  &#39;al:ios:app_name&#39;: &#39;Medium&#39;,
-  &#39;al:ios:app_store_id&#39;: &#39;828256236&#39;,
-  &#39;al:android:package&#39;: &#39;com.medium.reader&#39;,
-  &#39;al:android:app_name&#39;: &#39;Medium&#39;,
-  &#39;al:ios:url&#39;: &#39;medium://p/46851b6cfaa&#39;,
-  &#39;al:android:url&#39;: &#39;medium://p/46851b6cfaa&#39;,
-  &#39;al:web:url&#39;: &#39;https://medium.com/@aelcenganda/%E9%96%A9%E6%9D%B1%E6%AD%B7%E5%8F%B2%E7%94%B0%E9%87%8E%E9%9A%A8%E7%AD%86-46851b6cfaa&#39;}}</pre>
+<pre>{&#39;canonical&#39;: &#39;https://medium.com/@aelcenganda/%E9%96%A9%E6%9D%B1%E6%AD%B7%E5%8F%B2%E7%94%B0%E9%87%8E%E9%9A%A8%E7%AD%86-46851b6cfaa&#39;,
+ &#39;publisher&#39;: &#39;https://plus.google.com/103654360130207659246&#39;,
+ &#39;author&#39;: &#39;https://medium.com/@aelcenganda&#39;,
+ &#39;search&#39;: &#39;/osd.xml&#39;,
+ &#39;alternate&#39;: &#39;android-app://com.medium.reader/https/medium.com/p/46851b6cfaa&#39;,
+ &#39;stylesheet&#39;: &#39;https://cdn-static-1.medium.com/_/fp/css/main-branding-base.dHv3MHpy06pRs4706uR7tg.css&#39;,
+ &#39;icon&#39;: &#39;https://cdn-static-1.medium.com/_/fp/icons/favicon-rebrand-medium.3Y6xpZ-0FSdWDnPM3hSBIA.ico&#39;,
+ &#39;apple-touch-icon&#39;: &#39;https://cdn-images-1.medium.com/fit/c/120/120/1*8I-HPL0bfoIzGied-dzOvA.png&#39;,
+ &#39;mask-icon&#39;: &#39;https://cdn-static-1.medium.com/_/fp/icons/monogram-mask.KPLCSFEZviQN0jQ7veN2RQ.svg&#39;}</pre>
 </div>
 
 </div>
@@ -12043,7 +12009,7 @@ Baseline achieved: <strong>1.42869</strong></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[151]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">PATH_TO_DATA</span> <span class="o">=</span> <span class="s1">&#39;data/&#39;</span> <span class="c1"># modify this if you need to</span>
@@ -12056,7 +12022,7 @@ Baseline achieved: <strong>1.42869</strong></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[152]:</div>
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">extract_features_and_write</span><span class="p">(</span><span class="n">PATH_TO_DATA</span><span class="p">,</span> <span class="s1">&#39;train.json&#39;</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -12075,30 +12041,8 @@ Baseline achieved: <strong>1.42869</strong></p>
 <div class="prompt"></div>
 
 
-
-
-
- 
- 
-<div id="fc638ace-0a1b-4a0f-9be2-8b1ea1f5472b"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#fc638ace-0a1b-4a0f-9be2-8b1ea1f5472b');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "206fb480ca7a4e6882a71542f199d83c", "version_major": 2, "version_minor": 0}
-</script>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>62313it [04:09, 249.77it/s]
 </pre>
 </div>
 </div>
@@ -12109,7 +12053,7 @@ var element = $('#fc638ace-0a1b-4a0f-9be2-8b1ea1f5472b');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[153]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">extract_features_and_write</span><span class="p">(</span><span class="n">PATH_TO_DATA</span><span class="p">,</span> <span class="s1">&#39;test.json&#39;</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -12128,30 +12072,8 @@ var element = $('#fc638ace-0a1b-4a0f-9be2-8b1ea1f5472b');
 <div class="prompt"></div>
 
 
-
-
-
- 
- 
-<div id="4490babe-337f-47a0-a405-a73974fdf94e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "7da2b1e952d74bd08986f5425a5b6c8a", "version_major": 2, "version_minor": 0}
-</script>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>34645it [02:09, 266.63it/s]
 </pre>
 </div>
 </div>
@@ -12176,7 +12098,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
@@ -12198,7 +12120,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[227]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_datetime_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/generated/train_published.txt&#39;</span><span class="p">,</span> 
@@ -12221,7 +12143,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[227]:</div>
+<div class="prompt output_prompt">Out[10]:</div>
 
 
 
@@ -12238,7 +12160,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[258]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">add_datetime_features</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
@@ -12270,7 +12192,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[263]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_datetime_train_sparse</span> <span class="o">=</span> <span class="n">add_datetime_features</span><span class="p">(</span><span class="n">X_datetime_train</span><span class="p">)</span>
@@ -12292,7 +12214,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[260]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">getnick</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -12306,7 +12228,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[261]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_authors_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/generated/train_author.txt&#39;</span><span class="p">),</span> 
@@ -12322,7 +12244,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[262]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_authors_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_authors_test</span><span class="o">.</span><span class="n">shape</span>
@@ -12338,7 +12260,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[262]:</div>
+<div class="prompt output_prompt">Out[15]:</div>
 
 
 
@@ -12355,7 +12277,7 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[199]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">ohe</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>  <span class="c1"># Ignore unknown authors in test</span>
@@ -12378,10 +12300,15 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[175]:</div>
+<div class="prompt input_prompt">In&nbsp;[67]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tf_idf_vecr</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tf_idf_word</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">analyzer</span><span class="o">=</span><span class="s1">&#39;word&#39;</span><span class="p">,</span>
+                              <span class="n">max_features</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">stop_words</span><span class="o">=</span><span class="s1">&#39;english&#39;</span><span class="p">,</span>
+                              <span class="n">sublinear_tf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">strip_accents</span><span class="o">=</span><span class="s1">&#39;unicode&#39;</span><span class="p">)</span>
+
+<span class="n">tf_idf_char</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">analyzer</span><span class="o">=</span><span class="s1">&#39;char&#39;</span><span class="p">,</span> 
+                              <span class="n">max_features</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">strip_accents</span><span class="o">=</span><span class="s1">&#39;unicode&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12391,16 +12318,21 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[176]:</div>
+<div class="prompt input_prompt">In&nbsp;[85]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/generated/train_title.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
-    <span class="n">X_title_train_tfidf</span> <span class="o">=</span> <span class="n">tf_idf_vecr</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/generated/train_title.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+    <span class="n">X_title_train_tfidfword</span> <span class="o">=</span> <span class="n">tf_idf_word</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/generated/train_title.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+    <span class="n">X_title_train_tfidfchar</span> <span class="o">=</span> <span class="n">tf_idf_char</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/generated/test_title.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
-    <span class="n">X_title_test_tfidf</span> <span class="o">=</span> <span class="n">tf_idf_vecr</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">X_title_test_tfidfword</span> <span class="o">=</span> <span class="n">tf_idf_word</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/generated/test_title.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+    <span class="n">X_title_test_tfidfchar</span> <span class="o">=</span> <span class="n">tf_idf_char</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
     
-<span class="n">X_title_train_tfidf</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_title_test_tfidf</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">X_title_train_tfidfword</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_title_test_tfidfword</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
 </div>
@@ -12413,7 +12345,39 @@ var element = $('#4490babe-337f-47a0-a405-a73974fdf94e');
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[176]:</div>
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CPU times: user 17.9 s, sys: 577 ms, total: 18.4 s
+Wall time: 16.6 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[86]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_title_train_tfidfword</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_title_test_tfidfword</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[86]:</div>
 
 
 
