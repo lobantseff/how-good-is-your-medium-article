@@ -318,15 +318,17 @@ mean_absolute_error(y_valid, ridge_regr.predict(X_valid_sparse))
 get_ipython().run_cell_magic('time', '', 'y_submit = ridge_regr.fit(X_train_sparse, y_train).predict(X_test_sparse)')
 
 
-# In[ ]:
+# In[288]:
 
 
 plt.hist(y_valid, bins=30, alpha=.5, color='red', label='true', range=(0,10));
-plt.hist(ridge_pred, bins=30, alpha=.5, color='green', label='pred', range=(0,10));
+plt.hist(y_submit, bins=30, alpha=.5, color='green', label='pred', range=(0,10));
+#plt.hist(np.zeros_like(y_submit), bins=30, alpha=.5, color='green', label='pred', range=(0,10));
+
 plt.legend();
 
 
-# In[ ]:
+# In[283]:
 
 
 def write_submission_file(prediction, filename,
@@ -338,32 +340,50 @@ def write_submission_file(prediction, filename,
     submission.to_csv(filename)
 
 
-# In[ ]:
+# In[284]:
 
 
-write_submission_file(ridge_test_pred, os.path.join(PATH_TO_DATA,
+write_submission_file(y_submit, os.path.join(PATH_TO_DATA,
                                                     'assignment6_medium_submission.csv'))
 
 
 # **Now's the time for dirty Kaggle hacks. Form a submission file with all zeroes. Make a submission. What do you get if you think about it? How is it going to help you with modifying your predictions?**
 
-# In[ ]:
+# In[286]:
 
 
-write_submission_file(np.zeros_like(ridge_test_pred), 
+write_submission_file(np.zeros_like(y_submit), 
                       os.path.join(PATH_TO_DATA,
                                    'medium_all_zeros_submission.csv'))
 
 
 # **Modify predictions in an appropriate way (based on your all-zero submission) and make a new submission.**
 
-# In[ ]:
+# In[291]:
 
 
-ridge_test_pred_modif = ridge_test_pred # You code here
+mean_right = 4.33328
 
 
-# In[ ]:
+# In[293]:
+
+
+diff = mean_right - y_submit.mean()
+
+
+# In[296]:
+
+
+diff
+
+
+# In[297]:
+
+
+ridge_test_pred_modif = y_submit + diff # You code here
+
+
+# In[298]:
 
 
 write_submission_file(ridge_test_pred_modif, 
