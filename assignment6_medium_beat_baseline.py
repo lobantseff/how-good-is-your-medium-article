@@ -10,8 +10,6 @@
 # ## <center>Assignment #6
 # ### <center> Beating baselines in "How good is your Medium article?"
 #     
-# <img src='../../img/medium_claps.jpg' width=40% />
-# 
 # 
 # [Competition](https://www.kaggle.com/c/how-good-is-your-medium-article). The task is to beat "A6 baseline" (~1.45 Public LB score). Do not forget about our shared ["primitive" baseline](https://www.kaggle.com/kashnitsky/ridge-countvectorizer-baseline) - you'll find something valuable there.
 # 
@@ -19,7 +17,7 @@
 #  1. "Freeride". Come up with good features to beat the baseline "A6 baseline" (for now, public LB is only considered)
 #  2. You need to name your [team](https://www.kaggle.com/c/how-good-is-your-medium-article/team) (out of 1 person) in full accordance with the [course rating](https://drive.google.com/open?id=19AGEhUQUol6_kNLKSzBsjcGUU3qWy3BNUg8x8IFkO3Q). You can think of it as a part of the assignment. 16 credits for beating the mentioned baseline and correct team naming.
 
-# In[ ]:
+# In[276]:
 
 
 import os
@@ -31,11 +29,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import mean_absolute_error
 from scipy.sparse import csr_matrix, hstack
 from sklearn.linear_model import Ridge
+import matplotlib.pyplot as plt
 
 
 # The following code will help to throw away all HTML tags from an article content.
 
-# In[ ]:
+# In[4]:
 
 
 from html.parser import HTMLParser
@@ -59,7 +58,7 @@ def strip_tags(html):
 
 # Supplementary function to read a JSON line without crashing on escape characters.
 
-# In[ ]:
+# In[5]:
 
 
 def read_json_line(line=None):
@@ -79,7 +78,7 @@ def read_json_line(line=None):
 
 # Extract features `content`, `published`, `title` and `author`, write them to separate files for train and test sets.
 
-# In[ ]:
+# In[148]:
 
 
 def extract_features_and_write(path_to_data,
@@ -87,7 +86,7 @@ def extract_features_and_write(path_to_data,
     
     features = ['content', 'published', 'title', 'author']
     prefix = 'train' if is_train else 'test'
-    feature_files = [open(os.path.join(path_to_data,
+    feature_files = [open(os.path.join(path_to_data, 'generated',
                                        '{}_{}.txt'.format(prefix, feat)),
                           'w', encoding='utf-8')
                      for feat in features]
@@ -97,23 +96,46 @@ def extract_features_and_write(path_to_data,
 
         for line in tqdm_notebook(inp_json_file):
             json_data = read_json_line(line)
-            
-            # You code here
+
+            for key, file in zip(features, feature_files):
+                if key == 'content':
+                    file.write(strip_tags(
+                        json_data[key].replace('\n', ' ').replace('\r', ' '))+'\n')
+                elif key == 'published':
+                    file.write(list(json_data[key].values())[0]+'\n')
+                elif key == 'author':
+                    file.write(json_data[key]['url'] + '\n')
+                elif key == 'title':
+                    file.write(
+                        json_data[key].replace('\n', ' ').replace('\r', ' ')+'\n')
+                else:
+                    file.write(json_data[key]+'\n')
+
+        map(lambda file: file.close(), feature_files)
+        
 
 
-# In[ ]:
+# In[149]:
 
 
-PATH_TO_DATA = '../../data/kaggle_medium' # modify this if you need to
+with open('data/train.json') as f:
+    for i in range(3):
+        jsond = read_json_line(f.readline())
 
 
-# In[ ]:
+# In[151]:
+
+
+PATH_TO_DATA = 'data/' # modify this if you need to
+
+
+# In[152]:
 
 
 extract_features_and_write(PATH_TO_DATA, 'train.json', is_train=True)
 
 
-# In[ ]:
+# In[153]:
 
 
 extract_features_and_write(PATH_TO_DATA, 'test.json', is_train=False)
@@ -125,33 +147,142 @@ extract_features_and_write(PATH_TO_DATA, 'test.json', is_train=False)
 #     - Time features: publication hour, whether it's morning, day, night, whether it's a weekend
 #     - Bag of authors (i.e. One-Hot-Encoded author names)
 
-# In[ ]:
+# In[19]:
 
 
-# You code here
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import OneHotEncoder
+
+
+# #### Datetime features
+
+# In[227]:
+
+
+X_datetime_train = pd.read_csv('data/generated/train_published.txt', 
+            names=['datetime','b'], 
+            parse_dates=['datetime'])[['datetime']]
+X_datetime_test = pd.read_csv('data/generated/test_published.txt', 
+            names=['datetime','b'], 
+            parse_dates=['datetime'])[['datetime']]
+
+X_datetime_train.shape, X_datetime_test.shape
+
+
+# In[258]:
+
+
+def add_datetime_features(df):
+    hour = df.datetime.apply(lambda time: time.hour)
+    weekday = df.datetime.apply(lambda date: date.dayofweek)
+    weekend = (weekday.isin([5,6]))
+    morning = ((hour >= 7) & (hour <= 11)).astype('int')
+    day = ((hour >= 12) & (hour <= 18)).astype('int')
+    evening = ((hour >= 19) & (hour <= 23)).astype('int')
+    night = ((hour >= 0) & (hour <= 6)).astype('int')
+#     X = hstack([hour.values.reshape(-1, 1),
+#                 weekend.values.reshape(-1,1),
+#                 morning.values.reshape(-1,1),
+#                 day.values.reshape(-1,1),
+#                 evening.values.reshape(-1,1),
+#                 night.values.reshape(-1,1)])
+    return csr_matrix(np.hstack([hour.values.reshape(-1,1),
+                weekend.values.reshape(-1,1),
+                morning.values.reshape(-1,1),
+                day.values.reshape(-1,1),
+                evening.values.reshape(-1,1),
+                night.values.reshape(-1,1)]))
+
+
+# In[263]:
+
+
+X_datetime_train_sparse = add_datetime_features(X_datetime_train)
+X_datetime_test_sparse = add_datetime_features(X_datetime_test)
+
+
+# #### Author features
+
+# In[260]:
+
+
+def getnick(path):
+    return os.path.basename(os.path.normpath(path))
+
+
+# In[261]:
+
+
+X_authors_train = pd.read_csv(open('data/generated/train_author.txt'), 
+                        names=['url']).url.apply(getnick)
+X_authors_test = pd.read_csv(open('data/generated/test_author.txt'), 
+                        names=['url']).url.apply(getnick)
+
+
+# In[262]:
+
+
+X_authors_train.shape, X_authors_test.shape
+
+
+# In[199]:
+
+
+ohe = OneHotEncoder(handle_unknown='ignore')  # Ignore unknown authors in test
+X_authors_train_ohe = ohe.fit_transform(X_authors_train.values.reshape(-1, 1))
+X_authors_test_ohe = ohe.transform(X_authors_test.values.reshape(-1, 1))
+
+
+# #### Title and Content features
+
+# In[175]:
+
+
+tf_idf_vecr = TfidfVectorizer(ngram_range=(1,2), max_features=100000)
+
+
+# In[176]:
+
+
+with open('data/generated/train_title.txt') as input_file:
+    X_title_train_tfidf = tf_idf_vecr.fit_transform(input_file)
+
+with open('data/generated/test_title.txt') as input_file:
+    X_title_test_tfidf = tf_idf_vecr.transform(input_file)
+    
+X_title_train_tfidf.shape, X_title_test_tfidf.shape
+
+
+# In[178]:
+
+
+get_ipython().run_cell_magic('time', '', "with open('data/generated/train_content.txt') as f:\n    X_content_train_tfidf = tf_idf_vecr.fit_transform(f)\nwith open('data/generated/test_content.txt') as f:\n    X_content_test_tfidf = tf_idf_vecr.transform(f)\n\nX_content_train_tfidf.shape, X_content_test_tfidf.shape")
+
+
+# In[179]:
+
+
+X_content_train_tfidf.shape, X_content_test_tfidf.shape
 
 
 # **Join all sparse matrices.**
 
-# In[ ]:
+# In[267]:
 
+
+X_train_sparse = hstack([X_content_train_tfidf, X_title_train_tfidf,
+                         X_datetime_train_sparse, X_authors_train_ohe]).tocsr()
+X_test_sparse = hstack([X_content_test_tfidf, X_title_test_tfidf,
+                        X_datetime_test_sparse, X_authors_test_ohe]).tocsr()
 
 X_train_sparse = hstack([X_train_content_sparse, X_train_title_sparse,
                          X_train_author_sparse, 
-                         X_train_time_features_sparse]).tocsr()
-
-
-# In[ ]:
-
-
-X_test_sparse = hstack([X_test_content_sparse, X_test_title_sparse,
+                         X_train_time_features_sparse]).tocsr()X_test_sparse = hstack([X_test_content_sparse, X_test_title_sparse,
                         X_test_author_sparse, 
                         X_test_time_features_sparse]).tocsr()
-
-
 # **Read train target and split data for validation.**
 
-# In[ ]:
+# In[268]:
 
 
 train_target = pd.read_csv(os.path.join(PATH_TO_DATA, 'train_log1p_recommends.csv'), 
@@ -159,7 +290,7 @@ train_target = pd.read_csv(os.path.join(PATH_TO_DATA, 'train_log1p_recommends.cs
 y_train = train_target['log_recommends'].values
 
 
-# In[ ]:
+# In[272]:
 
 
 train_part_size = int(0.7 * train_target.shape[0])
@@ -171,18 +302,28 @@ y_valid = y_train[train_part_size:]
 
 # **Train a simple Ridge model and check MAE on the validation set.**
 
-# In[ ]:
+# In[273]:
 
 
-# You code here
+ridge_regr = Ridge()
+ridge_regr.fit(X_train_part_sparse, y_train_part)
+mean_absolute_error(y_valid, ridge_regr.predict(X_valid_sparse))
 
 
 # **Train the same Ridge with all available data, make predictions for the test set and form a submission file.**
 
+# In[275]:
+
+
+get_ipython().run_cell_magic('time', '', 'y_submit = ridge_regr.fit(X_train_sparse, y_train).predict(X_test_sparse)')
+
+
 # In[ ]:
 
 
-# You code here
+plt.hist(y_valid, bins=30, alpha=.5, color='red', label='true', range=(0,10));
+plt.hist(ridge_pred, bins=30, alpha=.5, color='green', label='pred', range=(0,10));
+plt.legend();
 
 
 # In[ ]:

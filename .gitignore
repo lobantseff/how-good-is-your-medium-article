@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # Data
-/init_data
+/data
 *.zip
 
 
@@ -12,6 +12,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+__pycache__
+.vscode
 .Python
 build/
 develop-eggs/
