@@ -407,4 +407,3 @@ write_submission_file(ridge_test_pred_modif,
 # 
 # Good luck!
 # 
-# <img src='../../img/kaggle_shakeup.png' width=50%>
